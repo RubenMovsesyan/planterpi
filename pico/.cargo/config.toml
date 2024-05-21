@@ -1,0 +1,10 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+
+# runner = "elf2uf2-rs --deploy --serial --verbose" # This opens serial at baud 115200 >:( It doesn't say this anywhere in the help info
+runner = "elf2uf2-rs --deploy --verbose" # This opens serial at baud 115200 >:( It doesn't say this anywhere in the help info
+
+[build]
+target = "thumbv6m-none-eabi"        # Cortex-M0 and Cortex-M0+
+
+[env]
+DEFMT_LOG = "debug"

@@ -1,0 +1,3 @@
+cargo:rustc-link-search=/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/build/rp-pac-f53c932c738e3448/out
+cargo:rerun-if-changed=device.x
+cargo:rerun-if-changed=build.rs

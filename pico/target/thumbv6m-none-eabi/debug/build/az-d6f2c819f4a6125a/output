@@ -1,0 +1,6 @@
+$ mkdir -p "/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/az-d6f2c819f4a6125a/out/try_track_caller"
+$ cd "/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/az-d6f2c819f4a6125a/out/try_track_caller"
+$ printf '%s' "// try_tra"... > "/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/az-d6f2c819f4a6125a/out/try_track_caller/try_track_caller.rs"
+$ cd "/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/az-d6f2c819f4a6125a/out/try_track_caller" && "/home/rmovsesyan/.rustup/toolchains/1.75-x86_64-unknown-linux-gnu/bin/rustc" "try_track_caller.rs" "--emit=dep-info,metadata" >& /dev/null
+cargo:rustc-cfg=track_caller
+$ rm -r "/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/az-d6f2c819f4a6125a/out/try_track_caller"

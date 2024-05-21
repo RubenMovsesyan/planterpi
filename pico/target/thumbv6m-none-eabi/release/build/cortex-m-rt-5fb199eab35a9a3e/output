@@ -1,0 +1,5 @@
+cargo:rustc-cfg=cortex_m
+cargo:rustc-cfg=armv6m
+cargo:rustc-link-search=/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/build/cortex-m-rt-5fb199eab35a9a3e/out
+cargo:rerun-if-changed=build.rs
+cargo:rerun-if-changed=link.x.in

@@ -1,0 +1,10 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/libfutures_task-019c67ddab9ff43b.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/spawn.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/future_obj.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/noop_waker.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/libfutures_task-019c67ddab9ff43b.rlib: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/spawn.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/future_obj.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/noop_waker.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/futures_task-019c67ddab9ff43b.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/spawn.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/future_obj.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/noop_waker.rs
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/spawn.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/future_obj.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-task-0.3.30/src/noop_waker.rs:

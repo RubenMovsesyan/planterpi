@@ -1,0 +1,10 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/libfutures_core-62d2ee753c0fdcab.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/future.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/stream.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/mod.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/poll.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/__internal/mod.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/futures_core-62d2ee753c0fdcab.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/future.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/stream.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/mod.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/poll.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/__internal/mod.rs
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/future.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/stream.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/mod.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/poll.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-core-0.3.30/src/task/__internal/mod.rs:

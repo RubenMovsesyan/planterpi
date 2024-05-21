@@ -1,0 +1,4 @@
+cargo:rustc-link-search=/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/build/defmt-0a3aa46e51b6abed/out
+cargo:rustc-cfg=no_cas
+cargo:rustc-check-cfg=cfg(c_variadic)
+cargo:rustc-check-cfg=cfg(no_cas)

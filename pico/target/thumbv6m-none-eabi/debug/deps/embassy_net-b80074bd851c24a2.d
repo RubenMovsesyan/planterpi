@@ -1,0 +1,11 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/libembassy_net-b80074bd851c24a2.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/fmt.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/device.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/tcp.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/time.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/udp.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/../README.md
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/embassy_net-b80074bd851c24a2.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/fmt.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/device.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/tcp.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/time.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/udp.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/../README.md
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/fmt.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/device.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/tcp.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/time.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/udp.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/embassy-net-0.4.0/src/../README.md:

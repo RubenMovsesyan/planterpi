@@ -1,0 +1,11 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/libno_std_net-59a54e95c9179ae7.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/addr.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/helper.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/ip.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/parser.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/libno_std_net-59a54e95c9179ae7.rlib: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/addr.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/helper.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/ip.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/parser.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/deps/no_std_net-59a54e95c9179ae7.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/addr.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/helper.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/ip.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/parser.rs
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/addr.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/helper.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/ip.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/no-std-net-0.6.0/src/parser.rs:

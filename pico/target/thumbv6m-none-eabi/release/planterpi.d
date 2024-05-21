@@ -1,0 +1,1 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/release/planterpi: /home/rmovsesyan/dev/planterpi/pico/build.rs /home/rmovsesyan/dev/planterpi/pico/memory.x /home/rmovsesyan/dev/planterpi/pico/src/main.rs

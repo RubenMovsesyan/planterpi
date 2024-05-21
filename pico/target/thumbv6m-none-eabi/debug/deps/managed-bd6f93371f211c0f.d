@@ -1,0 +1,11 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/libmanaged-bd6f93371f211c0f.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/object.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slice.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slotmap.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/map.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/libmanaged-bd6f93371f211c0f.rlib: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/object.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slice.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slotmap.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/map.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/managed-bd6f93371f211c0f.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/object.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slice.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slotmap.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/map.rs
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/object.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slice.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/slotmap.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/managed-0.8.0/src/map.rs:

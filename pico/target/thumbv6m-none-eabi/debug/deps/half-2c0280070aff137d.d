@@ -1,0 +1,11 @@
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/libhalf-2c0280070aff137d.rmeta: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat/convert.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16/arch.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/leading_zeros.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/slice.rs
+
+/home/rmovsesyan/dev/planterpi/pico/target/thumbv6m-none-eabi/debug/deps/half-2c0280070aff137d.d: /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/lib.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat/convert.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16/arch.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/leading_zeros.rs /home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/slice.rs
+
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/lib.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/bfloat/convert.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/binary16/arch.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/leading_zeros.rs:
+/home/rmovsesyan/.cargo/registry/src/index.crates.io-6f17d22bba15001f/half-2.4.1/src/slice.rs:
