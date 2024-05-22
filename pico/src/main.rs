@@ -189,24 +189,29 @@ async fn main(_spawner: Spawner) {
 
 
     // Addressable LED setup
-    let spi1_miso = p.PIN_4;
     let spi1_mosi = p.PIN_3;
     let spi1_clk = p.PIN_2;
 
     let addressable_led_config = {
         let mut config = spi::Config::default();
-        config.frequency = 2_500_000;
+        config.frequency = 8_500_000;
         config
     };
 
+    const L0: u8 = 0xE0;
+    const L1: u8 = 0xFC;
+
     let mut spi1 = Spi::new_blocking_txonly(p.SPI0, spi1_clk, spi1_mosi, addressable_led_config);
-    // let buf = [0xDB, 0x6D, 0xB6];
-    let buf = [0x00, 0x00, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB];
-    // let buf = [0xDB];
+    // let buf = [0x00, 0x00, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB];
+    // let buf = [0x00, 0x00, 0xE0, 0xE0, 0xE0]; // 0xE0 is logical 0 0xFC is logical 1
+    // 300 us is the minimum for the reset period, the datasheets says 50us >:(
+    // let buf = [0x00, 0x00, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L0, L0, L0, L0, L0, L0, L0, L0];
+    let buf = [0x00, 0x00, L1, L1, L1, L1, L1, L1, L1, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1];
+    let buf2 = [0x00, 0x00, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1];
+    // spi1.blocking_write(&buf).unwrap();
     /*
         Setup Section End
      */
-
 
     /*
         Loop Section Begin (run continuously)
@@ -214,11 +219,12 @@ async fn main(_spawner: Spawner) {
     // Putting the loop in an asynchronous function lets us run the loop and the logger at the same time
     let echo_fut = async {
         loop {
-            log::info!("New Cycle!");
-            let mut rx_buf: [u8; 3] = [0, 0, 0];
-            // spi1.blocking_transfer(&mut rx_buf, &buf).unwrap();
+            log::info!("Teal");
             spi1.blocking_write(&buf).unwrap();
-            Timer::after_micros(50).await;
+            Timer::after_millis(300).await;
+            log::info!("Magenta");
+            spi1.blocking_write(&buf2).unwrap();
+            Timer::after_millis(300).await;
             // for i in 0..360 {
             //     let rgb = hsl_to_rgb(i as f32, 1.0, 0.5);
             //     log::info!("Red: {}, Green: {}, Blue: {}", rgb.0, rgb.1, rgb.2);
