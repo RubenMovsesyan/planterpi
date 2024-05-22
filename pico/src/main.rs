@@ -3,13 +3,17 @@
 
 use defmt::{info, panic};
 use embassy_executor::Spawner;
-use embassy_rp::gpio;
+use embassy_rp::{gpio, spi::Polarity};
 use embassy_time::{Duration, Timer};
 use gpio::{Level, Output};
 use {defmt_rtt as _, panic_probe as _};
 
 // Pwm libraries
 use embassy_rp::pwm::{Config, Pwm};
+
+// SPI libraries
+use embassy_rp::spi::Spi;
+use embassy_rp::spi;
 
 // Serial communication libraries
 use embassy_futures::join::join;
@@ -36,15 +40,15 @@ impl From<EndpointError> for Disconnected {
     }
 }
 
-async fn echo<'d, T: Instance + 'd>(class: &mut CdcAcmClass<'d, Driver<'d, T>>) -> Result<(), Disconnected> {
-    let mut buf = [0; 64];
-    loop {
-        let n = class.read_packet(&mut buf).await?;
-        let data = &buf[..n];
-        info!("data: {:x}", data);
-        class.write_packet(data).await?;
-    }
-}
+// async fn echo<'d, T: Instance + 'd>(class: &mut CdcAcmClass<'d, Driver<'d, T>>) -> Result<(), Disconnected> {
+//     let mut buf = [0; 64];
+//     loop {
+//         let n = class.read_packet(&mut buf).await?;
+//         let data = &buf[..n];
+//         info!("data: {:x}", data);
+//         class.write_packet(data).await?;
+//     }
+// }
 
 #[cortex_m_rt::pre_init]
 unsafe fn before_main() {
@@ -107,11 +111,11 @@ async fn main(_spawner: Spawner) {
     };
 
     // Create classes on the builder.
-    let mut class = {
-        static STATE: StaticCell<State> = StaticCell::new();
-        let state = STATE.init(State::new());
-        CdcAcmClass::new(&mut builder, state, 64)
-    };
+    // let mut class = {
+    //     static STATE: StaticCell<State> = StaticCell::new();
+    //     let state = STATE.init(State::new());
+    //     CdcAcmClass::new(&mut builder, state, 64)
+    // };
 
 
     // Create a class for the logger
@@ -163,26 +167,42 @@ async fn main(_spawner: Spawner) {
         c 
     };
 
-    let mut pwm_red =   Pwm::new_output_b(p.PWM_CH0, p.PIN_1, pwm_config_red.clone());
-    let mut pwm_green = Pwm::new_output_b(p.PWM_CH1, p.PIN_3, pwm_config_green.clone());
-    let mut pwm_blue =  Pwm::new_output_b(p.PWM_CH2, p.PIN_5, pwm_config_blue.clone());
+    // let mut pwm_red =   Pwm::new_output_b(p.PWM_CH0, p.PIN_1, pwm_config_red.clone());
+    // let mut pwm_green = Pwm::new_output_b(p.PWM_CH1, p.PIN_3, pwm_config_green.clone());
+    // let mut pwm_blue =  Pwm::new_output_b(p.PWM_CH2, p.PIN_5, pwm_config_blue.clone());
 
-    // Functions for setting the pwm pin values
-    let mut set_red = |compare_value: u16| {
-        pwm_config_red.compare_b = compare_value;
-        pwm_red.set_config(&pwm_config_red);
+    // // Functions for setting the pwm pin values
+    // let mut set_red = |compare_value: u16| {
+    //     pwm_config_red.compare_b = compare_value;
+    //     pwm_red.set_config(&pwm_config_red);
+    // };
+
+    // let mut set_green = |compare_value: u16| {
+    //     pwm_config_green.compare_b = compare_value;
+    //     pwm_green.set_config(&pwm_config_green);
+    // };
+
+    // let mut set_blue = |compare_value: u16| {
+    //     pwm_config_blue.compare_b = compare_value;
+    //     pwm_blue.set_config(&pwm_config_blue);
+    // };
+
+
+    // Addressable LED setup
+    let spi1_miso = p.PIN_4;
+    let spi1_mosi = p.PIN_3;
+    let spi1_clk = p.PIN_2;
+
+    let addressable_led_config = {
+        let mut config = spi::Config::default();
+        config.frequency = 2_500_000;
+        config
     };
 
-    let mut set_green = |compare_value: u16| {
-        pwm_config_green.compare_b = compare_value;
-        pwm_green.set_config(&pwm_config_green);
-    };
-
-    let mut set_blue = |compare_value: u16| {
-        pwm_config_blue.compare_b = compare_value;
-        pwm_blue.set_config(&pwm_config_blue);
-    };
-
+    let mut spi1 = Spi::new_blocking_txonly(p.SPI0, spi1_clk, spi1_mosi, addressable_led_config);
+    // let buf = [0xDB, 0x6D, 0xB6];
+    let buf = [0x00, 0x00, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB];
+    // let buf = [0xDB];
     /*
         Setup Section End
      */
@@ -195,14 +215,18 @@ async fn main(_spawner: Spawner) {
     let echo_fut = async {
         loop {
             log::info!("New Cycle!");
-            for i in 0..360 {
-                let rgb = hsl_to_rgb(i as f32, 1.0, 0.5);
-                log::info!("Red: {}, Green: {}, Blue: {}", rgb.0, rgb.1, rgb.2);
-                set_red(map32(rgb.0 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
-                set_green(map32(rgb.1 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
-                set_blue(map32(rgb.2 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
-                Timer::after_millis(DEFAULT_DELAY).await;
-            }
+            let mut rx_buf: [u8; 3] = [0, 0, 0];
+            // spi1.blocking_transfer(&mut rx_buf, &buf).unwrap();
+            spi1.blocking_write(&buf).unwrap();
+            Timer::after_micros(50).await;
+            // for i in 0..360 {
+            //     let rgb = hsl_to_rgb(i as f32, 1.0, 0.5);
+            //     log::info!("Red: {}, Green: {}, Blue: {}", rgb.0, rgb.1, rgb.2);
+            //     set_red(map32(rgb.0 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
+            //     set_green(map32(rgb.1 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
+            //     set_blue(map32(rgb.2 as i32, 0, 255, DEFAULT_BOT as i32, DEFAULT_TOP as i32) as u16);
+            //     Timer::after_millis(DEFAULT_DELAY).await;
+            // }
             
             // for i in DEFAULT_BOT..DEFAULT_TOP {
             //     // log::info!("current i: {}", i);
@@ -221,21 +245,6 @@ async fn main(_spawner: Spawner) {
             //     Timer::after_micros(DEFAULT_DELAY).await;
             // }
 
-            // let _ = hsl_to_rgb(50.0, 0.5, 0.5);
-            // Timer::after_secs(1).await;
-            // log::info!("Start Loop");
-            // red_led.set_high();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
-            // blue_led.set_low();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
-            // green_led.set_high();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
-            // red_led.set_low();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
-            // blue_led.set_high();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
-            // green_led.set_low();
-            // Timer::after(Duration::from_millis(DEFAULT_DELAY)).await;
         }
     };
 
