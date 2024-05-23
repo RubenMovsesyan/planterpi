@@ -24,6 +24,9 @@ use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
 use static_cell::StaticCell;
 
+// Custom modules
+mod ws2812b;
+
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
 });
@@ -33,7 +36,6 @@ struct Disconnected {}
 impl From<EndpointError> for Disconnected {
     fn from(val: EndpointError) -> Self {
         match val {
-            // EndpointError::BufferOverflow => panic!("Buffer overflow"),
             EndpointError::BufferOverflow => panic!("Buffer overflow"),
             EndpointError::Disabled => Disconnected {},
         }
@@ -61,6 +63,8 @@ unsafe fn before_main() {
 const DEFAULT_DELAY: u64 = 10;
 const DEFAULT_TOP: u16 = 0x8000;
 const DEFAULT_BOT: u16 = 8;
+const NUM_LEDS: usize = 12;
+const LED_INFO_SIZE: usize = 2 + (ws2812b::INFO_SIZE * NUM_LEDS);
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
@@ -146,26 +150,26 @@ async fn main(_spawner: Spawner) {
     // let mut blue_led = Output::new(p.PIN_3, Level::Low);
 
     // Set up pins for PWM
-    let mut pwm_config_red: Config = {
-        let mut c: Config = Default::default();
-        c.top = DEFAULT_TOP;
-        c.compare_b = DEFAULT_BOT;
-        c 
-    };
+    // let mut pwm_config_red: Config = {
+    //     let mut c: Config = Default::default();
+    //     c.top = DEFAULT_TOP;
+    //     c.compare_b = DEFAULT_BOT;
+    //     c 
+    // };
 
-    let mut pwm_config_green: Config = {
-        let mut c: Config = Default::default();
-        c.top = DEFAULT_TOP;
-        c.compare_b = DEFAULT_BOT;
-        c 
-    };
+    // let mut pwm_config_green: Config = {
+    //     let mut c: Config = Default::default();
+    //     c.top = DEFAULT_TOP;
+    //     c.compare_b = DEFAULT_BOT;
+    //     c 
+    // };
 
-    let mut pwm_config_blue: Config = {
-        let mut c: Config = Default::default();
-        c.top = DEFAULT_TOP;
-        c.compare_b = DEFAULT_BOT;
-        c 
-    };
+    // let mut pwm_config_blue: Config = {
+    //     let mut c: Config = Default::default();
+    //     c.top = DEFAULT_TOP;
+    //     c.compare_b = DEFAULT_BOT;
+    //     c 
+    // };
 
     // let mut pwm_red =   Pwm::new_output_b(p.PWM_CH0, p.PIN_1, pwm_config_red.clone());
     // let mut pwm_green = Pwm::new_output_b(p.PWM_CH1, p.PIN_3, pwm_config_green.clone());
@@ -189,26 +193,26 @@ async fn main(_spawner: Spawner) {
 
 
     // Addressable LED setup
-    let spi1_mosi = p.PIN_3;
-    let spi1_clk = p.PIN_2;
+    let spi0_mosi = p.PIN_3;
+    let spi0_clk = p.PIN_2;
 
-    let addressable_led_config = {
-        let mut config = spi::Config::default();
-        config.frequency = 8_500_000;
-        config
-    };
+    // let addressable_led_config = {
+    //     let mut config = spi::Config::default();
+    //     config.frequency = 8_500_000;
+    //     config
+    // };
 
-    const L0: u8 = 0xE0;
-    const L1: u8 = 0xFC;
-
-    let mut spi1 = Spi::new_blocking_txonly(p.SPI0, spi1_clk, spi1_mosi, addressable_led_config);
+    let mut spi0 = Spi::new_blocking_txonly(p.SPI0, spi0_clk, spi0_mosi, ws2812b::get_addressable_led_config());
     // let buf = [0x00, 0x00, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB];
     // let buf = [0x00, 0x00, 0xE0, 0xE0, 0xE0]; // 0xE0 is logical 0 0xFC is logical 1
     // 300 us is the minimum for the reset period, the datasheets says 50us >:(
     // let buf = [0x00, 0x00, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L0, L0, L0, L0, L0, L0, L0, L0];
-    let buf = [0x00, 0x00, L1, L1, L1, L1, L1, L1, L1, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1];
-    let buf2 = [0x00, 0x00, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1];
+    // let buf = [0x00, 0x00, L1, L1, L1, L1, L1, L1, L1, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1];
+    // let buf2 = [0x00, 0x00, L0, L0, L0, L0, L0, L0, L0, L0, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1, L1];
     // spi1.blocking_write(&buf).unwrap();
+
+    let mut starting_hue = 0;
+    let hue_adjust = 360 / NUM_LEDS;
     /*
         Setup Section End
      */
@@ -219,12 +223,23 @@ async fn main(_spawner: Spawner) {
     // Putting the loop in an asynchronous function lets us run the loop and the logger at the same time
     let echo_fut = async {
         loop {
-            log::info!("Teal");
-            spi1.blocking_write(&buf).unwrap();
-            Timer::after_millis(300).await;
-            log::info!("Magenta");
-            spi1.blocking_write(&buf2).unwrap();
-            Timer::after_millis(300).await;
+            
+            let mut color_buffer: [u32; NUM_LEDS] = [0; NUM_LEDS];
+
+            for i in 0..NUM_LEDS {
+                let color: f32 = ((starting_hue + (i * hue_adjust)) % 360) as f32;
+                let rgb = hsl_to_rgb(color, 1.0, 0.5);
+                // log::info!("Color: {:#06x}", rgb);
+                color_buffer[i] = rgb;
+            }
+
+            let buf = ws2812b::generate_addressable_led_buffer::<LED_INFO_SIZE>(&color_buffer);
+
+            spi0.blocking_write(&buf).unwrap();
+            starting_hue += 1;
+            starting_hue %= 360;
+            Timer::after_millis(5).await;
+
             // for i in 0..360 {
             //     let rgb = hsl_to_rgb(i as f32, 1.0, 0.5);
             //     log::info!("Red: {}, Green: {}, Blue: {}", rgb.0, rgb.1, rgb.2);
@@ -293,16 +308,16 @@ fn hue_to_rgb(chroma: f32, x: f32, hue_prime: f32) -> (f32, f32, f32) {
 }
 
 // Takes in an hsl value and returns an rgb value from it
-fn hsl_to_rgb(hue: f32, saturation: f32, lumincance: f32) -> (u8, u8, u8) {
+fn hsl_to_rgb(hue: f32, saturation: f32, lumincance: f32) -> u32 {
     // Initialize all values to 0
-    let mut red:u8 = 0;
-    let mut green:u8 = 0;
-    let mut blue:u8 = 0;
+    let mut red:u32 = 0;
+    let mut green:u32 = 0;
+    let mut blue:u32 = 0;
 
     if saturation == 0.0 {
-        red = (lumincance * 255.0) as u8;
-        green = (lumincance * 255.0) as u8;
-        blue = (lumincance * 255.0) as u8;
+        red = (lumincance * 255.0) as u32;
+        green = (lumincance * 255.0) as u32;
+        blue = (lumincance * 255.0) as u32;
         // log::info!("S = 0 == Red: {} Green: {} Blue: {}", red, green, blue);
     } else {
         let chroma: f32 = (1.0 - abs32(2.0 * lumincance - 1.0)) * saturation as f32;
@@ -313,11 +328,15 @@ fn hsl_to_rgb(hue: f32, saturation: f32, lumincance: f32) -> (u8, u8, u8) {
 
         let m = lumincance - (chroma / 2.0);
 
-        red = ((rgb_values.0 + m) * 255.0) as u8;
-        green = ((rgb_values.1 + m) * 255.0) as u8;
-        blue = ((rgb_values.2 + m) * 255.0) as u8;
+        red = ((rgb_values.0 + m) * 255.0) as u32;
+        green = ((rgb_values.1 + m) * 255.0) as u32;
+        blue = ((rgb_values.2 + m) * 255.0) as u32;
         // log::info!("S != 0 == Red: {} Green: {} Blue: {}", red, green, blue);
     }
     // log::info!("At End == Red: {} Green: {} Blue: {}", red, green, blue);
-    (red, green, blue)
+    let mut ret: u32 = 0;
+    ret |= red << 16;
+    ret |= green << 8;
+    ret |= blue;
+    ret
 }
