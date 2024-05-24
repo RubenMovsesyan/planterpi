@@ -4,6 +4,8 @@ const DRIVER_FREQUENCY: u32 = 8_500_000;
 pub const INFO_SIZE: usize = 24;
 const LOGIC_0: u8 = 0xE0;
 const LOGIC_1: u8 = 0xFC;
+pub const NUM_LEDS: usize = 12;
+pub const LED_INFO_SIZE: usize = 2 + (INFO_SIZE * NUM_LEDS);
 
 
 pub fn get_addressable_led_config() -> spi::Config {
