@@ -31,7 +31,7 @@ impl GPIODriver {
     pub fn enable_output(&self, pin: usize) {
         self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
             w.oeover().enable()
-        })
+        });
     }
 
     pub fn set_pin(&self, pin: usize, status: CtrlStatus) {
