@@ -39,6 +39,8 @@ cyw43 = { version = "0.1.0", features = ["defmt", "firmware-logs"] }
 cyw43-pio = { version = "0.1.0", features = ["defmt", "overclock"] }
 static_cell = { version = "2" }
 embassy-usb = "0.2.0"
+rp2040-pac = "0.6.0"
+libc_alloc = "1.0.7"
 
 # cargo build/run
 [profile.dev]
