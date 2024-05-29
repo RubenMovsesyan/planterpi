@@ -13,7 +13,8 @@ const NUM_GPIO: usize = 30;
 
 pub enum CtrlStatus {
     Low,
-    High
+    High,
+    Pwm,
 }
 
 pub struct GPIODriver {
@@ -38,16 +39,23 @@ impl GPIODriver {
         match (status) {
             CtrlStatus::Low => {
                 self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
+                    w.funcsel().sio();
                     w.oeover().enable();
                     w.outover().low()
                 });
             },
             CtrlStatus::High => {
                 self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
+                    w.funcsel().sio();
                     w.oeover().enable();
                     w.outover().high()
                 });
             }
+            CtrlStatus::Pwm => {
+                self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
+                    w.funcsel().pwm()
+                })
+            },
         }
     }
 

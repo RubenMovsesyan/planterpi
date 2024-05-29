@@ -1,4 +1,4 @@
-pub fn map32(input: i32, input_start: i32, input_end: i32, output_start: i32, output_end: i32) -> i32 {
+pub fn map32(input: f32, input_start: f32, input_end: f32, output_start: f32, output_end: f32) -> f32 {
     let slope = (output_end - output_start) / (input_end - input_start);
     output_start + slope * (input - input_start)
 }

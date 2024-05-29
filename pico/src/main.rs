@@ -6,10 +6,6 @@
 // Core string manipulation
 use core::str;
 
-// PAC Access
-use gpio::CtrlStatus::{High, Low};
-
-
 // Core libraries
 use defmt::{info, panic};
 use embassy_executor::Spawner;
@@ -18,7 +14,7 @@ use embassy_time::{Duration, Timer};
 use {defmt_rtt as _, panic_probe as _};
 
 // Pwm libraries
-use embassy_rp::pwm::{Config, Pwm};
+// use embassy_rp::pwm::{Config, Pwm};
 
 // SPI libraries
 use embassy_rp::spi::Spi;
@@ -44,6 +40,10 @@ mod ws2812b;
 mod math;
 mod pwm;
 mod gpio;
+
+// Custom libraries
+use gpio::{CtrlStatus::*, GPIODriver};
+use pwm::{PwmSlice::*, PWMDriver};
 
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
@@ -90,8 +90,8 @@ unsafe fn before_main() {
 
 const DEFAULT_DELAY: u64 = 250;
 const RED_LED: usize = 4;
-const GREEN_LED: usize = 5;
-const BLUE_LED: usize = 6;
+const GREEN_LED: usize = 6;
+const BLUE_LED: usize = 8;
 
 
 #[embassy_executor::main]
@@ -179,44 +179,31 @@ async fn main(_spawner: Spawner) {
     // let cs = Output::new(p.PIN_25, Level::High);
     // let mut pio = Pio::new(p.PIO0);
     // let spi = PioSpi::new(&mut pio.common, pio.sm0, pio.irq0, cs, p.PIN_24, p.PIN_29, p.DMA_CH0);
-    // Now the boilerplate is over :)
-
-    // Set up the pins for on and off configuration
-    // let mut red_led = Output::new(p.PIN_1, Level::Low);  
-    // let mut green_led = Output::new(p.PIN_2, Level::Low);    
-    // let mut blue_led = Output::new(p.PIN_3, Level::Low);
-
-    // Set up pins for PWM
-    let mut red_config =    pwm::get_pwm_config();
-    let mut green_config =  pwm::get_pwm_config();
-    let mut blue_config =   pwm::get_pwm_config();
-
-    let mut pwm_red =   Pwm::new_output_b(p.PWM_CH6, p.PIN_13, red_config.clone());
-    let mut pwm_green = Pwm::new_output_b(p.PWM_CH7, p.PIN_15, green_config.clone());
-    let mut pwm_blue =  Pwm::new_output_b(p.PWM_CH0, p.PIN_17, blue_config.clone());
-    
-
-    let mut set_rgb = |rgb: u32| {
-        pwm::set_rgb(rgb, (&mut red_config, &mut green_config, &mut blue_config));
-        pwm_red.set_config(&red_config);
-        pwm_green.set_config(&green_config);
-        pwm_blue.set_config(&blue_config);
-    };
-
+    // Now the boilerplate is over :) --------------------------------------------------------------------------------------
 
     // Addressable LED setup
-    let spi0_mosi = p.PIN_3;
-    let spi0_clk = p.PIN_2;
+    // let spi0_mosi = p.PIN_3;
+    // let spi0_clk = p.PIN_2;
 
     // 300 us is the minimum for the reset period, the datasheets says 50us >:(
-    let mut spi0 = Spi::new_blocking_txonly(p.SPI0, spi0_clk, spi0_mosi, ws2812b::get_addressable_led_config());
+    // let mut spi0 = Spi::new_blocking_txonly(p.SPI0, spi0_clk, spi0_mosi, ws2812b::get_addressable_led_config());
 
-    let mut starting_hue = 0;
-    let hue_adjust = 360 / ws2812b::NUM_LEDS;
+    // let mut starting_hue = 0;
+    // let hue_adjust = 360 / ws2812b::NUM_LEDS;
     
-    // let periph = unsafe { rp2040_pac::Peripherals::steal() };
-    let gpio_pins = gpio::GPIODriver::begin();
-    // gpio_pins.enable_output(4);
+    // Enable the gpio driver
+    let gpio_driver = GPIODriver::begin();
+    let pwm_driver = PWMDriver::begin();
+
+    gpio_driver.set_pin(RED_LED, Pwm);
+    gpio_driver.set_pin(GREEN_LED, Pwm);
+    gpio_driver.set_pin(BLUE_LED, Pwm);
+
+    pwm_driver.start_pwm(2, A);
+    pwm_driver.start_pwm(3, A);
+    pwm_driver.start_pwm(4, A);
+
+    let mut hue = 0.0;
     /*
         Setup Section End
      */
@@ -227,39 +214,19 @@ async fn main(_spawner: Spawner) {
     // Putting the loop in an asynchronous function lets us run the loop and the logger at the same time
     let echo_fut = async {
         loop {
-            gpio_pins.set_pin(RED_LED, Low);
-            gpio_pins.set_pin(GREEN_LED, High);
-            gpio_pins.set_pin(BLUE_LED, High);
-            Timer::after_millis(500).await;
-            gpio_pins.set_pin(RED_LED, High);
-            gpio_pins.set_pin(GREEN_LED, Low);
-            gpio_pins.set_pin(BLUE_LED, High);
-            Timer::after_millis(500).await;
-            gpio_pins.set_pin(RED_LED, High);
-            gpio_pins.set_pin(GREEN_LED, High);
-            gpio_pins.set_pin(BLUE_LED, Low);
-            Timer::after_millis(500).await;
-            log::info!("Cycle complete");
+            if hue >= 360.0 {
+                hue %= 360.0;
+            }
 
+            // log::info!("Hue: {}", hue);
+            let rgb = math::color_math::u32_to_rgb(math::color_math::hsl_to_rgb(hue, 1.0, 0.5));
+            // log::info!("Red:   {}\n\rGreen: {}\n\rBlue:  {}", rgb.0 as i32, rgb.1, rgb.2);
+            pwm_driver.set_pwm_value_percent(2, A, math::map32(rgb.0 as f32, 0.0, 255.0, 0.0, 1.0));
+            pwm_driver.set_pwm_value_percent(3, A, math::map32(rgb.1 as f32, 0.0, 255.0, 0.0, 1.0));
+            pwm_driver.set_pwm_value_percent(4, A, math::map32(rgb.2 as f32, 0.0, 255.0, 0.0, 1.0));
 
-            // Timer::after_secs(2).await;
-            // log::info!("Starting wait");
-            // for i in (0..3).rev() {
-            //     Timer::after_secs(1).await;
-            //     log::info!("{}", i);
-            // }
-
-            // // This should set the gpio pin 4 to low
-            // let periph = unsafe { rp2040_pac::Peripherals::steal() };
-            // let io_bank0: rp2040_pac::IO_BANK0 = periph.IO_BANK0;
-            // let gpio_ctrl: &rp2040_pac::generic::Reg<rp2040_pac::io_bank0::gpio::gpio_ctrl::GPIO_CTRL_SPEC> = io_bank0.gpio(4).gpio_ctrl(); // this is gpio pin 4
-            // log::info!("GPIO4_CTRL pre: {:#06x}", gpio_ctrl.read().bits());
-            // gpio_ctrl.write(|w| {
-            //     w.oeover().enable(); // Enable the GPIO pin
-            //     w.outover().low() // Set the pin to low
-            // });
-            // log::info!("GPIO4_CTRL post: {:#06x}", gpio_ctrl.read().bits());
-
+            Timer::after_millis(5).await;
+            hue += 1.0;
 
             // let mut color_buffer: [u32; ws2812b::NUM_LEDS] = [0; ws2812b::NUM_LEDS];
 
@@ -273,54 +240,6 @@ async fn main(_spawner: Spawner) {
             // let buf = ws2812b::generate_addressable_led_buffer::<{ ws2812b::LED_INFO_SIZE }>(&color_buffer);
             // set_rgb(color_buffer[0]);
             // spi0.blocking_write(&buf).unwrap();
-
-            // if starting_hue == 0 {
-            //     log::info!("Red: {:#06x}", color_buffer[0]);
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            // } else if starting_hue == 120 {
-            //     log::info!("Green: {:#06x}", color_buffer[0]);
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            // } else if starting_hue == 240 {
-            //     log::info!("Blue: {:#06x}", color_buffer[0]);
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(0);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            //     set_rgb(color_buffer[0]);
-            //     Timer::after_millis(DEFAULT_DELAY).await;
-            // }
-
-            // starting_hue += 1;
-            // starting_hue %= 360;
-            // Timer::after_millis(25).await;
         }
     };
 
