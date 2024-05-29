@@ -43,7 +43,7 @@ mod gpio;
 
 // Custom libraries
 use gpio::{CtrlStatus::*, GPIODriver};
-use pwm::{PwmSlice::*, PWMDriver};
+use pwm::PWMDriver;
 
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
@@ -89,9 +89,9 @@ unsafe fn before_main() {
 // ----------------------------------- End of boilerplate --------------------------------------------------------
 
 const DEFAULT_DELAY: u64 = 250;
-const RED_LED: usize = 4;
-const GREEN_LED: usize = 6;
-const BLUE_LED: usize = 8;
+const RED_LED: usize = 1;
+const GREEN_LED: usize = 3;
+const BLUE_LED: usize = 5;
 
 
 #[embassy_executor::main]
@@ -199,9 +199,9 @@ async fn main(_spawner: Spawner) {
     gpio_driver.set_pin(GREEN_LED, Pwm);
     gpio_driver.set_pin(BLUE_LED, Pwm);
 
-    pwm_driver.start_pwm(2, A);
-    pwm_driver.start_pwm(3, A);
-    pwm_driver.start_pwm(4, A);
+    pwm_driver.start_pwm(RED_LED);
+    pwm_driver.start_pwm(GREEN_LED);
+    pwm_driver.start_pwm(BLUE_LED);
 
     let mut hue = 0.0;
     /*
@@ -221,9 +221,10 @@ async fn main(_spawner: Spawner) {
             // log::info!("Hue: {}", hue);
             let rgb = math::color_math::u32_to_rgb(math::color_math::hsl_to_rgb(hue, 1.0, 0.5));
             // log::info!("Red:   {}\n\rGreen: {}\n\rBlue:  {}", rgb.0 as i32, rgb.1, rgb.2);
-            pwm_driver.set_pwm_value_percent(2, A, math::map32(rgb.0 as f32, 0.0, 255.0, 0.0, 1.0));
-            pwm_driver.set_pwm_value_percent(3, A, math::map32(rgb.1 as f32, 0.0, 255.0, 0.0, 1.0));
-            pwm_driver.set_pwm_value_percent(4, A, math::map32(rgb.2 as f32, 0.0, 255.0, 0.0, 1.0));
+            pwm_driver.set_pwm_value_percent(RED_LED, math::map32(rgb.0 as f32, 0.0, 255.0, 1.0, 0.0));
+            pwm_driver.set_pwm_value_percent(GREEN_LED, math::map32(rgb.1 as f32, 0.0, 255.0, 1.0, 0.0));
+            pwm_driver.set_pwm_value_percent(BLUE_LED, math::map32(rgb.2 as f32, 0.0, 255.0, 1.0, 0.0));
+
 
             Timer::after_millis(5).await;
             hue += 1.0;
