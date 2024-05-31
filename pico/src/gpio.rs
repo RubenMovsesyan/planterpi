@@ -15,6 +15,7 @@ pub enum CtrlStatus {
     Low,
     High,
     Pwm,
+    Spi,
 }
 
 pub struct GPIODriver {
@@ -54,7 +55,12 @@ impl GPIODriver {
             CtrlStatus::Pwm => {
                 self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
                     w.funcsel().pwm()
-                })
+                });
+            },
+            CtrlStatus::Spi => {
+                self.io_bank0.gpio(pin).gpio_ctrl().write(|w| {
+                    w.funcsel().spi()
+                });
             },
         }
     }

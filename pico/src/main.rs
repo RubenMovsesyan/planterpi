@@ -40,10 +40,12 @@ mod ws2812b;
 mod math;
 mod pwm;
 mod gpio;
+mod spi;
 
 // Custom libraries
 use gpio::{CtrlStatus::*, GPIODriver};
 use pwm::PWMDriver;
+use spi::{SPIDriver, SPISelector};
 
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
@@ -93,6 +95,8 @@ const RED_LED: usize = 1;
 const GREEN_LED: usize = 3;
 const BLUE_LED: usize = 5;
 
+const SPI1_SCK: usize = 10;
+const SPI1_MOSI: usize = 11;
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
@@ -194,16 +198,29 @@ async fn main(_spawner: Spawner) {
     // Enable the gpio driver
     let gpio_driver = GPIODriver::begin();
     let pwm_driver = PWMDriver::begin();
+    let spi_driver = SPIDriver::begin();
 
     gpio_driver.set_pin(RED_LED, Pwm);
     gpio_driver.set_pin(GREEN_LED, Pwm);
     gpio_driver.set_pin(BLUE_LED, Pwm);
 
+    gpio_driver.set_pin(SPI1_SCK, Spi);
+    gpio_driver.set_pin(SPI1_MOSI, Spi);
+
     pwm_driver.start_pwm(RED_LED);
     pwm_driver.start_pwm(GREEN_LED);
     pwm_driver.start_pwm(BLUE_LED);
 
+    // spi_driver.set_baud_rate(125_000_000, 115200, SPISelector::Spi1);
+
     let mut hue = 0.0;
+    let hue_diff = 360 / ws2812b::NUM_LEDS;
+
+    // Debugging ---------------
+
+    // let clocks = unsafe { rp2040_pac::Peripherals::steal().CLOCKS };
+
+    // Debugging ---------------
     /*
         Setup Section End
      */
@@ -226,17 +243,47 @@ async fn main(_spawner: Spawner) {
             pwm_driver.set_pwm_value_percent(BLUE_LED, math::map32(rgb.2 as f32, 0.0, 255.0, 1.0, 0.0));
 
 
+            let mut color_buffer: [u32; ws2812b::NUM_LEDS] = [0; ws2812b::NUM_LEDS];
+
+            for i in 0..ws2812b::NUM_LEDS {
+                let color: f32 = ((hue as usize + (i * hue_diff)) % 360) as f32;
+                let rgb_full = math::color_math::hsl_to_rgb(color, 1.0, 0.5);
+                // log::info!("Color: {:#06x}", rgb);
+                color_buffer[i] = rgb_full;
+            }
+
+            log::info!("{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}\n\r{:#010x}",
+                color_buffer[0],
+                color_buffer[1],
+                color_buffer[2],
+                color_buffer[3],
+                color_buffer[4],
+                color_buffer[5],
+                color_buffer[6],
+                color_buffer[7],
+                color_buffer[8],
+                color_buffer[9],
+                color_buffer[10],
+                color_buffer[11],
+            );
+
+            let vals = spi_driver.set_baud_rate(125_000_000, 28000, SPISelector::Spi1);
+            spi_driver.send_data::<{ws2812b::LED_INFO_SIZE}>(
+                7,
+                &ws2812b::generate_addressable_led_buffer::<{ws2812b::LED_INFO_SIZE}>(&color_buffer), 
+                SPISelector::Spi1
+            );
+            // log::info!("Prescale: {}\n\rPostdiv: {}", vals.0, vals.1);
+            // log::info!("Freq = {}", (125_000_000 / (vals.0 as u32 * (1 + vals.1 as u32))));
+
+            // spi_driver.read_registers(SPISelector::Spi1);
+            // spi_driver.send_data::<2>(15, &[0xCAFE, 0xBABE], SPISelector::Spi1);
+            
+            // log::info!("System clock reg: {:#010x}", clocks.clk_sys_ctrl().read().bits());
+            // log::info!("Periph clock reg: {:#010x}", clocks.clk_peri_ctrl().read().bits());
+
             Timer::after_millis(5).await;
             hue += 1.0;
-
-            // let mut color_buffer: [u32; ws2812b::NUM_LEDS] = [0; ws2812b::NUM_LEDS];
-
-            // for i in 0..ws2812b::NUM_LEDS {
-            //     let color: f32 = ((starting_hue + (i * hue_adjust)) % 360) as f32;
-            //     let rgb = math::color_math::hsl_to_rgb(color, 1.0, 0.5);
-            //     // log::info!("Color: {:#06x}", rgb);
-            //     color_buffer[i] = rgb;
-            // }
 
             // let buf = ws2812b::generate_addressable_led_buffer::<{ ws2812b::LED_INFO_SIZE }>(&color_buffer);
             // set_rgb(color_buffer[0]);
