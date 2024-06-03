@@ -45,7 +45,7 @@ mod spi;
 // Custom libraries
 use gpio::{CtrlStatus::*, GPIODriver};
 use pwm::PWMDriver;
-use spi::{SPIDriver, SPISelector};
+use spi::{SPIDriver, SPIFormat, SPISelector};
 
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
@@ -271,7 +271,8 @@ async fn main(_spawner: Spawner) {
             spi_driver.send_data::<{ws2812b::LED_INFO_SIZE}>(
                 7,
                 &ws2812b::generate_addressable_led_buffer::<{ws2812b::LED_INFO_SIZE}>(&color_buffer), 
-                SPISelector::Spi1
+                SPISelector::Spi1,
+                SPIFormat::Microwire
             );
             // log::info!("Prescale: {}\n\rPostdiv: {}", vals.0, vals.1);
             // log::info!("Freq = {}", (125_000_000 / (vals.0 as u32 * (1 + vals.1 as u32))));

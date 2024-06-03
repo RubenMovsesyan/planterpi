@@ -1,9 +1,17 @@
 use cortex_m::peripheral;
-use rp2040_pac::{SPI0, SPI1};
+use rp2040_pac::{adc::FIFO, SPI0, SPI1};
+
+const FIFO_SIZE: usize = 8;
 
 pub enum SPISelector {
     Spi0,
     Spi1
+}
+
+pub enum SPIFormat {
+    Motorola,
+    TexasInstruments,
+    Microwire,
 }
 
 pub struct SPIDriver {
@@ -88,18 +96,31 @@ impl SPIDriver {
         &self,
         data_size: u8,
         data: &[u16],
-        spi_selector: SPISelector
+        spi_selector: SPISelector,
+        format_selector: SPIFormat
     ) {
         match (spi_selector) {
             SPISelector::Spi0 => {
                 // Set up the control registers
                 self.spi0.sspcr0().write(|w| unsafe {
-                    w.dss().bits(data_size)
+                    w.dss().bits(data_size);
+
+                    match(format_selector) {
+                        SPIFormat::Motorola => {
+                            w.frf().motorola()
+                        },
+                        SPIFormat::TexasInstruments => {
+                            w.frf().texas_instruments()
+                        },
+                        SPIFormat::Microwire => {
+                            w.frf().national_semiconductor_microwire()
+                        },
+                    }
                 });
 
                 // Set to master mode
                 // Enable the port
-                self.spi0.sspcr1().write(|w| unsafe {
+                self.spi0.sspcr1().write(|w| {
                     w.ms().clear_bit();
                     w.sse().set_bit()
                 });
@@ -118,12 +139,24 @@ impl SPIDriver {
             SPISelector::Spi1 => {
                 // Set up the control registers
                 self.spi1.sspcr0().write(|w| unsafe {
-                    w.dss().bits(data_size)
+                    w.dss().bits(data_size);
+                    
+                    match(format_selector) {
+                        SPIFormat::Motorola => {
+                            w.frf().motorola()
+                        },
+                        SPIFormat::TexasInstruments => {
+                            w.frf().texas_instruments()
+                        },
+                        SPIFormat::Microwire => {
+                            w.frf().national_semiconductor_microwire()
+                        },
+                    }
                 });
 
                 // Set to master mode
                 // Enable the port
-                self.spi1.sspcr1().write(|w| unsafe {
+                self.spi1.sspcr1().write(|w| {
                     w.ms().clear_bit();
                     w.sse().set_bit()
                 });
@@ -139,6 +172,35 @@ impl SPIDriver {
                 }
             },
         }
+    }
+
+    pub fn read_data(
+        &self,
+        spi_selector: SPISelector
+    ) -> ([u16; FIFO_SIZE], usize) {
+        let mut output: [u16; FIFO_SIZE] = [0; FIFO_SIZE];
+        let mut index = 0;
+        match (spi_selector) {
+            SPISelector::Spi0 => {
+                // Wait until there is information in the read fifo
+                while self.spi0.sspsr().read().rne().bit_is_clear() {}
+
+                while self.spi0.sspsr().read().rne().bit_is_set() {
+                    output[index] = self.spi0.sspdr().read().data().bits();
+                    index += 1;
+                }
+            },
+            SPISelector::Spi1 => {
+                // Wait until there is information in the read fifo
+                while self.spi1.sspsr().read().rne().bit_is_clear() {}
+
+                while self.spi1.sspsr().read().rne().bit_is_set() {
+                    output[index] = self.spi1.sspdr().read().data().bits();
+                    index += 1;
+                }
+            },
+        }
+        (output, index)
     }
 
     pub fn read_registers(&self, spi_selector: SPISelector) {
